@@ -4,19 +4,8 @@ import datetime
 import json
 import os
 from dotenv import load_dotenv
-import socket
 
 load_dotenv()
-
-def get_local_ip():
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        ip = s.getsockname()[0]
-        s.close()
-        return ip
-    except Exception:
-        return "127.0.0.1"
 
 app = Flask(__name__)
 
@@ -108,17 +97,11 @@ def get_survey_data():
     return jsonify(data)
 
 # 创建数据库表
-with app.app_context():
-    db.create_all()
-
-# 只在本地开发时运行
-if __name__ == '__main__':
-    local_ip = get_local_ip()
-    print(f"\n* 访问地址:")
-    print(f"* 本机访问: http://localhost:5001")
-    print(f"* 局域网访问: http://{local_ip}:5001")
-    print(f"* 提示：其他设备需要连接相同的 WiFi 网络才能访问\n")
-    app.run(debug=True, port=5001)
+try:
+    with app.app_context():
+        db.create_all()
+except Exception as e:
+    print(f"Database initialization error: {e}")
 
 # 为 Vercel 提供应用实例
 app.debug = False 
