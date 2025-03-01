@@ -1,25 +1,30 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 import datetime
-import json
 import os
+import json
 from dotenv import load_dotenv
 
+# Load environment variables
 load_dotenv()
 
+# Initialize Flask app
 app = Flask(__name__)
+CORS(app)
 
-# 根据环境使用不同的数据库配置
+# Database configuration for Vercel deployment
 if os.environ.get('VERCEL_ENV') == 'production':
-    # 在 Vercel 上使用 PostgreSQL
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+    # Use PostgreSQL in production
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('POSTGRES_URL')
 else:
-    # 本地开发使用 SQLite
+    # Use SQLite in development
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///noise_data.db'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+# Database model
 class NoiseRecord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
@@ -35,6 +40,13 @@ class NoiseRecord(db.Model):
     longitude = db.Column(db.Float)
     device_info = db.Column(db.Text)
 
+# Create database tables
+try:
+    with app.app_context():
+        db.create_all()
+except Exception as e:
+    print(f"Database initialization error: {e}")
+
 @app.route('/')
 def landing():
     return render_template('landing.html')
@@ -42,10 +54,6 @@ def landing():
 @app.route('/detect')
 def detect():
     return render_template('index.html')
-
-@app.route('/admin')
-def admin():
-    return render_template('admin.html')
 
 @app.route('/get_time')
 def get_time():
@@ -55,7 +63,9 @@ def get_time():
 @app.route('/submit_survey', methods=['POST'])
 def submit_survey():
     try:
-        data = request.json
+        data = request.get_json()
+        
+        # Create new record
         new_record = NoiseRecord(
             age=data['age'],
             location=data['location'],
@@ -64,44 +74,34 @@ def submit_survey():
             noise_level=data['noise_level'],
             noise_source=data['noise_source'],
             tolerance=data['tolerance'],
-            measured_db=data['measured_db'],
-            latitude=data['latitude'],
-            longitude=data['longitude'],
-            device_info=json.dumps(data['device_info'])
+            measured_db=data.get('measured_db'),
+            latitude=data.get('latitude'),
+            longitude=data.get('longitude'),
+            device_info=json.dumps(data.get('device_info', {}))
         )
+        
+        # Save to database
         db.session.add(new_record)
         db.session.commit()
-        return jsonify({"success": True, "message": "数据提交成功"})
+        
+        return jsonify({'success': True, 'message': '数据提交成功'})
+        
     except Exception as e:
-        return jsonify({"success": False, "message": str(e)}), 400
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
 
-@app.route('/get_survey_data')
-def get_survey_data():
-    records = NoiseRecord.query.order_by(NoiseRecord.timestamp.desc()).all()
-    data = []
-    for record in records:
-        data.append({
-            'timestamp': record.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-            'age': record.age,
-            'location': record.location,
-            'environment': record.environment,
-            'activity': record.activity,
-            'noise_level': record.noise_level,
-            'noise_source': record.noise_source,
-            'tolerance': record.tolerance,
-            'measured_db': record.measured_db,
-            'latitude': record.latitude,
-            'longitude': record.longitude,
-            'device_info': json.loads(record.device_info)
-        })
-    return jsonify(data)
+@app.route('/thank_you')
+def thank_you():
+    return render_template('thank_you.html')
 
-# 创建数据库表
-try:
-    with app.app_context():
-        db.create_all()
-except Exception as e:
-    print(f"Database initialization error: {e}")
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404
 
-# 为 Vercel 提供应用实例
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return render_template('500.html'), 500
+
+# For Vercel deployment
 app.debug = False 
