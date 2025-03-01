@@ -1,0 +1,186 @@
+body {
+    background-color: #f5f8fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.card {
+    border-radius: 15px;
+    border: none;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+    background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    padding: 1.5rem !important;
+}
+
+.card-header h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.info-box {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    height: 100%;
+}
+
+.info-box h5 {
+    color: #007bff;
+    margin-bottom: 0.5rem;
+}
+
+.noise-meter {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.progress {
+    height: 1.5rem;
+    border-radius: 1rem;
+    margin: 1rem 0;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #28a745, #ffc107, #dc3545);
+    transition: width 0.3s ease;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.form-select, .form-control {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus, .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+}
+
+.form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+#db-value {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #2c3e50;
+    margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .card-header h1 {
+        font-size: 1.5rem;
+    }
+}
+
+/* 封面页样式 */
+.hazard-card {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 1.5rem;
+    height: 100%;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.hazard-card:hover {
+    transform: translateY(-5px);
+}
+
+.hazard-icon {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.hazard-card h3 {
+    color: #2c3e50;
+    font-size: 1.25rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.hazard-card ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.hazard-card li {
+    color: #505c6b;
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.hazard-card li:before {
+    content: "•";
+    color: #007bff;
+    font-weight: bold;
+    position: absolute;
+    left: 0;
+}
+
+.noise-levels {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    background-color: #e3f2fd;
+    color: #2c3e50;
+}
+
+.recording-timer {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #dc3545;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.average-result {
+    background-color: #e3f2fd;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 500;
+} 
